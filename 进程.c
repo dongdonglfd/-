@@ -17,4 +17,4 @@ int main()
     return 0;
 }
 //getpid 获取当前进程id
-//getppid 获取父进程id# -
+//getppid 获取父进程id

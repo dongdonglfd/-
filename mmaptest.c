@@ -11,7 +11,7 @@
 int main()
 {
     int fd=open("test.mmap",O_RDWR|O_CREAT|O_TRUNC,0644);
-    ftruncate(fd,4);
+    ftruncate(fd,4);//拓展文件大小
     char*memp;
     memp=mmap(NULL,4,PROT_READ|PROT_WRITE,MAP_SHARED,fd,0);
     if(memp==MAP_FAILED)

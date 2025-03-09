@@ -35,7 +35,7 @@ void handle_cd(char **args);
 
 void sig_catch(int signum)
 {
-    
+    printf("catch %d\n",signum);
 }
 // 解析输入并构建Pipeline结构
 Pipeline parse_input(char* line) {
@@ -281,7 +281,6 @@ int main() {
     init_shell();
     signal(SIGINT,sig_catch);
     while (1) {
-        
         printf("%s", prompt);
         if(s!=NULL)
         {
