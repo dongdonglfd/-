@@ -27,7 +27,7 @@ typedef struct {
 } Pipeline;
 
 static char prev_dir[PATH_MAX] = {0};
-char *s=NULL;
+// char *s=NULL;
 // 函数声明
 Pipeline parse_input(char* line);
 void execute_pipeline(Pipeline* pipeline);
@@ -233,26 +233,25 @@ char **parse_line(char *line, int *arg_count) {
     *arg_count = position;
     return tokens;
 }
-// 原有cd命令处理保持不变...
-// 新增：处理cd命令的函数
+
 void handle_cd(char **args) {
     char *target = args[1];
     char cwd[PATH_MAX];
 
-    // 保存当前目录作为下次的prev_dir
+    // 保存当前目录
     if (getcwd(cwd, sizeof(cwd)) == NULL) {
         perror("getcwd");
         return;
     }
 
-    // 处理不同参数情况
-    if (!target) {  // 无参数：切换到HOME
+    // 确定目标目录
+    if (!target) {
         target = getenv("HOME");
         if (!target) {
             fprintf(stderr, "cd: HOME environment variable not set\n");
             return;
         }
-    } else if (strcmp(target, "-") == 0) {  // cd -
+    } else if (strcmp(target, "-") == 0) {
         if (prev_dir[0] == '\0') {
             fprintf(stderr, "cd: no previous directory\n");
             return;
@@ -267,9 +266,16 @@ void handle_cd(char **args) {
         // 更新prev_dir为切换前的目录
         strncpy(prev_dir, cwd, sizeof(prev_dir));
         prev_dir[sizeof(prev_dir)-1] = '\0';
+        
+        // 更新当前目录显示
+        // free(s); // 释放旧内存
+        // s = malloc(strlen(target) + 1);
+        // if (!s) {
+        //     perror("malloc");
+        //     return;
+        // }
+        // strcpy(s, target);
     }
-    s=malloc(sizeof(target));
-    strcpy(s,target);
 }
 
 // 修改后的命令执行函数
@@ -293,10 +299,16 @@ int main() {
     while (1) {
         
         printf("%s", prompt);
-        if(s!=NULL)
-        {
-            printf("%s> ",s);
-        }
+        char cwd[PATH_MAX];
+ 
+    // 获取当前工作目录，存储在cwd数组中
+    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+        printf("%s>", cwd);
+    } else {
+        perror("getcwd() 错误");
+        // 处理错误，例如分配更多内存或退出程序
+        exit(EXIT_FAILURE);
+    }
         fflush(stdout);//用于清空（刷新）标准输出缓冲区（stdout），确保文本被立即显示
 
         if (getline(&line, &bufsize, stdin) == -1) {//用于存储读取的行
@@ -325,6 +337,6 @@ int main() {
     }
 
     free(line);
-    free(s);
+    // free(s);
     return 0;
 }
