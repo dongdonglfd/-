@@ -31,6 +31,9 @@ int main()
         perror("socket");
         exit(0);
     }
+    //设置端口复用
+    int optval=1;
+    setsockopt(lfd,SOL_SOCKET,SO_REUSEADDR,&optval,sizeof(int));
     //2.绑定
     struct sockaddr_in addr;
     addr.sin_family=AF_INET;//IPV4
